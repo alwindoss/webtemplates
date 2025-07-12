@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - IncidentPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Main Dashboard Layout */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dashboard-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+        }
+
+        .dashboard-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-trend {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .trend-up {
+            color: #28a745;
+        }
+
+        .trend-down {
+            color: #dc3545;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .chart-filter {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+            border: 2px dashed #dee2e6;
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .activity-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f8f9fa;
+            transition: background 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .activity-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-critical {
+            background: #ffe6e6;
+            color: #dc3545;
+        }
+
+        .status-high {
+            background: #fff3e6;
+            color: #fd7e14;
+        }
+
+        .status-medium {
+            background: #fff9e6;
+            color: #ffc107;
+        }
+
+        .status-low {
+            background: #e6f7e6;
+            color: #28a745;
+        }
+
+        /* Admin Actions */
+        .admin-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn.danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .action-btn.danger:hover {
+            background: #dc3545;
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        /* System Health */
+        .system-health {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .health-indicator {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .health-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+        }
+
+        .status-online {
+            background: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .status-warning {
+            background: #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .status-offline {
+            background: #dc3545;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .health-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .health-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .dashboard-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .system-health {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .chart-card, .activity-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">IncidentPro</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#incidents">Incidents</a></li>
+                <li><a href="#users">Users</a></li>
+                <li><a href="#reports">Reports</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+            <div class="user-profile">
+                <span class="admin-badge">Admin</span>
+                <div class="profile-avatar">AK</div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Admin Dashboard</h1>
+            <p class="dashboard-subtitle">System overview and administrative controls</p>
+        </div>
+    </section>
+
+    <!-- Main Dashboard Content -->
+    <div class="container">
+        <div class="dashboard-content">
+            <!-- Key Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-trend trend-up">+12% ↗</div>
+                    </div>
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Total Incidents</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-trend trend-down">-8% ↘</div>
+                    </div>
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Active Incidents</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-trend trend-up">+3% ↗</div>
+                    </div>
+                    <div class="stat-number">156</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-trend trend-up">+15% ↗</div>
+                    </div>
+                    <div class="stat-number">2.3h</div>
+                    <div class="stat-label">Avg Response Time</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Incident Trends</h3>
+                        <select class="chart-filter">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>Last 90 Days</option>
+                        </select>
+                    </div>
+                    <div class="chart-placeholder">
+                        📈 Interactive Chart Area<br>
+                        <small>Incident volume over time</small>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Priority Distribution</h3>
+                    </div>
+                    <div class="chart-placeholder">
+                        🥧 Priority Breakdown<br>
+                        <small>Critical, High, Medium, Low</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <h3 style="margin-bottom: 1rem; color: #333;">System Health Status</h3>
+            <div class="system-health">
+                <div class="health-indicator">
+                    <div class="health-status status-online"></div>
+                    <div class="health-label">API Server</div>
+                    <div class="health-value">Online</div>
+                </div>
+                <div class="health-indicator">
+                    <div class="health-status status-online"></div>
+                    <div class="health-label">Database</div>
+                    <div class="health-value">Healthy</div>
+                </div>
+                <div class="health-indicator">
+                    <div class="health-status status-warning"></div>
+                    <div class="health-label">Email Service</div>
+                    <div class="health-value">Warning</div>
+                </div>
+                <div class="health-indicator">
+                    <div class="health-status status-online"></div>
+                    <div class="health-label">Storage</div>
+                    <div class="health-value">75% Used</div>
+                </div>
+                <div class="health-indicator">
+                    <div class="health-status status-online"></div>
+                    <div class="health-label">Backup</div>
+                    <div class="health-value">Current</div>
+                </div>
+            </div>
+
+            <!-- Activity Section -->
+            <div class="activity-section">
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3 class="activity-title">Recent Incidents</h3>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">JD</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Server outage reported in EU region</div>
+                            <div class="activity-time">5 minutes ago</div>
+                        </div>
+                        <div class="activity-status status-critical">Critical</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">SM</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Database performance degradation</div>
+                            <div class="activity-time">23 minutes ago</div>
+                        </div>
+                        <div class="activity-status status-high">High</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">KL</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Email delivery delays reported</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                        <div class="activity-status status-medium">Medium</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">RT</div>
+                        <div class="activity-content">
+                            <div class="activity-text">SSL certificate renewal needed</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                        <div class="activity-status status-low">Low</div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3 class="activity-title">User Activity</h3>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">AK</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Admin logged in from new device</div>
+                            <div class="activity-time">10 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">MB</div>
+                        <div class="activity-content">
+                            <div class="activity-text">New user account created</div>
+                            <div class="activity-time">30 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">CS</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Password reset requested</div>
+                            <div class="activity-time">45 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">LM</div>
+                        <div class="activity-content">
+                            <div class="activity-text">User permissions updated</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            <h3 style="margin-bottom: 1rem; color: #333;">Quick Admin Actions</h3>
+            <div class="admin-actions">
+                <a href="#" class="action-btn">
+                    👥 Manage Users
+                </a>
+                <a href="#" class="action-btn">
+                    📊 View Reports
+                </a>
+                <a href="#" class="action-btn">
+                    ⚙️ System Settings
+                </a>
+                <a href="#" class="action-btn">
+                    🔐 Security Audit
+                </a>
+                <a href="#" class="action-btn">
+                    📱 Send Notifications
+                </a>
+                <a href="#" class="action-btn danger">
+                    🚨 Emergency Broadcast
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
